@@ -59,8 +59,8 @@ while executar :
 
     
     #Sair
-    if operador == "5" or operador == "Sair" :
-        print("obrigado")
+    if operador == "5" or operador == "Sair":
+        print("obrigado!")
         executar = False
  
 
