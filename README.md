@@ -1,4 +1,4 @@
 # curso_pythonbasico
 
 
-Eu sou seu readmi
+Eu sou seu readme
