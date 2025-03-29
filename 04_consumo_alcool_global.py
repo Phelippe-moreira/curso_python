@@ -9,11 +9,11 @@ import random
 pio.renderers.default = "browser"
 
 #carregar o drinks.csv
-df = pd.read_csv("C:/Users/noturno/Desktop/Caio2/Sistema/drinks.csv")
+df = pd.read_csv("C:/Users/integral/Desktop/phelippe/Sistema/drinks.csv")
 #df_avengers = pd.read_csv("avengers.csv")
 
 #cria o banco de dados em sql e popular com os dados do arquivo csv
-conn = sqlite3.connect("C:/Users/noturno/Desktop/Caio2/Sistema/consumo_alcool.db")
+conn = sqlite3.connect("C:/Users/integral/Desktop/phelippe/Sistema/consumo_alcool.db")
 df.to_sql("drinks", conn, if_exists="replace", index=False)
 #df_avengers.to_sql("Vingadores", conn, if_exists="replace", index=False)
 conn.commit()
@@ -50,7 +50,7 @@ def index():
 
 @app.route('/grafico1')
 def grafico1():
-    conn = sqlite3.connect("C:/Users/noturno/Desktop/Caio2/Sistema/consumo_alcool.db")
+    conn = sqlite3.connect("'C:/Users/integral/Desktop/phelippe/Sistema/consumo_alcool.db")
     df = pd.read_sql_query("""
     SELECT country, total_litres_of_pure_alcohol
     FROM drinks
@@ -69,7 +69,7 @@ def grafico1():
 # media do consumo por tipo global
 @app.route('/grafico2')
 def grafico2():
-    conn = sqlite3.connect("C:/Users/noturno/Desktop/Caio2/Sistema/consumo_alcool.db")
+    conn = sqlite3.connect("'C:/Users/integral/Desktop/phelippe/Sistema/consumo_alcool.db")
     df = pd.read_sql_query("SELECT AVG(beer_servings) AS cerveja, AVG(spirit_servings) AS destilados, AVG(wine_servings) AS vinhos FROM drinks", conn)
     conn.close()
     df_melted = df.melt(var_name="Bebidas", value_name="Média de Porções")
@@ -86,7 +86,7 @@ def grafico3():
         "Americas":  ["USA","Brazil","Canada","Argentina","Mexico"]
     }
     dados = []
-    conn = sqlite3.connect("C:/Users/noturno/Desktop/Caio2/Sistema/consumo_alcool.db")
+    conn = sqlite3.connect("'C:/Users/integral/Desktop/phelippe/Sistema/consumo_alcool.db")
     for regiao, paises in regioes.items():
         placeholders = ",".join([f"'{p}'" for p in paises])
         query =  f"""
@@ -99,9 +99,15 @@ def grafico3():
     fig = px.pie(df_regioes, names="Região", values="Consumo Total", title="Consumo total por região do mundo")
     return fig.to_html() + "<br/><a href='/'>Voltar ao Inicio</a>"
 
-
-
-
+@app.route('/grafico4')
+def grafico4():
+    conn = sqlite3.connect('C:/Users/integral/Desktop/phelippe/Sistema/consumo_alcool.db')
+    df = pd.read_sql_query ('SELECT beer_servings, spirit_servings, wine_servings FROM drinks', conn)
+    conn.close()
+    medias = df.mean().resert_index()
+    medias.columns = ["Tipo", "Média"]
+    fig = px.pie(medias, names="Tipo", values="Média", title="Proporção média entre tipos de bebidas")
+    return fig.to_html() + '<br><a href="/">Voltar ao inicio</a>'
 
 # inicia o servidor flask
 if __name__ == "__main__":
